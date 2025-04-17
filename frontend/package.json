@@ -4,12 +4,12 @@
   "scripts": {
     "ng": "ng",
     "start": "node server.js",
-    "build": "ng build --configuration production --output-path=dist/publicity-frontend --base-href=/",
+    "build": "ng build --configuration production --output-path=dist/publicity-frontend --base-href=/ --aot --build-optimizer --optimization=true --vendor-chunk=true",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "postinstall": "ng build --configuration production --output-path=dist/publicity-frontend --base-href=/",
+    "postinstall": "npm install && npm run build",
     "debug": "node -e \"console.log('Current directory:', process.cwd()); console.log('Directory contents:', require('fs').readdirSync('.'))\"",
-    "heroku-postbuild": "ng build --configuration production --output-path=dist/publicity-frontend --base-href=/"
+    "heroku-postbuild": "npm install && npm run build"
   },
   "private": true,
   "dependencies": {
@@ -24,6 +24,8 @@
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
     "express": "^4.21.2",
+    "compression": "^1.7.4",
+    "helmet": "^7.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
