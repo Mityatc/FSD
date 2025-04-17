@@ -7,9 +7,9 @@
     "build": "ng build --configuration production --output-path=dist/publicity-frontend --base-href=/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "postinstall": "npm install && npm run build",
+    "postinstall": "ng build --configuration production --output-path=dist/publicity-frontend --base-href=/",
     "debug": "node -e \"console.log('Current directory:', process.cwd()); console.log('Directory contents:', require('fs').readdirSync('.'))\"",
-    "heroku-postbuild": "npm run build"
+    "heroku-postbuild": "ng build --configuration production --output-path=dist/publicity-frontend --base-href=/"
   },
   "private": true,
   "dependencies": {
