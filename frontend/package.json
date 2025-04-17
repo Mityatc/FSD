@@ -4,10 +4,12 @@
   "scripts": {
     "ng": "ng",
     "start": "node server.js",
-    "build": "ng build --configuration production --output-path=dist/publicity-frontend",
+    "build": "ng build --configuration production --output-path=dist/publicity-frontend --base-href=/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "postinstall": "npm run build"
+    "postinstall": "npm run build",
+    "debug": "node -e \"console.log('Current directory:', process.cwd()); console.log('Directory contents:', require('fs').readdirSync('.'))\"",
+    "heroku-postbuild": "npm run build"
   },
   "private": true,
   "dependencies": {
@@ -38,5 +40,9 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

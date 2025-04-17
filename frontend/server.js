@@ -16,26 +16,38 @@ function buildAngularApp() {
       fs.mkdirSync(distPath, { recursive: true });
     }
 
-    exec('npm run build', (error, stdout, stderr) => {
-      if (error) {
-        console.error('Build failed:', error);
-        reject(error);
+    // Run npm install first to ensure all dependencies are available
+    exec('npm install', (installError) => {
+      if (installError) {
+        console.error('npm install failed:', installError);
+        reject(installError);
         return;
       }
-      console.log('Build completed successfully');
-      console.log('Build output:', stdout);
-      console.log('Build errors:', stderr);
+
+      console.log('npm install completed successfully');
       
-      // Verify the build output
-      const indexPath = path.join(distPath, 'index.html');
-      if (fs.existsSync(indexPath)) {
-        console.log('index.html exists at:', indexPath);
-      } else {
-        console.error('index.html not found at:', indexPath);
-        console.log('Directory contents:', fs.readdirSync(distPath));
-      }
-      
-      resolve();
+      // Now run the build
+      exec('npm run build', (buildError, stdout, stderr) => {
+        if (buildError) {
+          console.error('Build failed:', buildError);
+          reject(buildError);
+          return;
+        }
+        console.log('Build completed successfully');
+        console.log('Build output:', stdout);
+        console.log('Build errors:', stderr);
+        
+        // Verify the build output
+        const indexPath = path.join(distPath, 'index.html');
+        if (fs.existsSync(indexPath)) {
+          console.log('index.html exists at:', indexPath);
+        } else {
+          console.error('index.html not found at:', indexPath);
+          console.log('Directory contents:', fs.readdirSync(distPath));
+        }
+        
+        resolve();
+      });
     });
   });
 }
@@ -71,8 +83,19 @@ const port = process.env.PORT || 8080;
 // Build the application before starting the server
 buildAngularApp()
   .then(() => {
-    app.listen(port, () => {
+    const server = app.listen(port, '0.0.0.0', () => {
       console.log(`Server running on port ${port}`);
+      console.log('Server is listening on all network interfaces');
+    });
+
+    // Handle server errors
+    server.on('error', (error) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`Port ${port} is already in use`);
+      } else {
+        console.error('Server error:', error);
+      }
+      process.exit(1);
     });
   })
   .catch((error) => {
