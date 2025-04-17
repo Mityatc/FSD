@@ -41,9 +41,12 @@ function buildAngularApp() {
         const indexPath = path.join(distPath, 'index.html');
         if (fs.existsSync(indexPath)) {
           console.log('index.html exists at:', indexPath);
+          console.log('Build directory contents:', fs.readdirSync(distPath));
         } else {
           console.error('index.html not found at:', indexPath);
           console.log('Directory contents:', fs.readdirSync(distPath));
+          reject(new Error('Build failed - index.html not found'));
+          return;
         }
         
         resolve();
@@ -55,6 +58,13 @@ function buildAngularApp() {
 // Serve static files from the dist directory
 const staticPath = path.join(process.cwd(), 'dist', 'publicity-frontend');
 console.log('Serving static files from:', staticPath);
+
+// Verify the static directory exists
+if (!fs.existsSync(staticPath)) {
+  console.error('Static directory not found:', staticPath);
+  process.exit(1);
+}
+
 app.use(express.static(staticPath));
 
 // Handle all routes by serving index.html
@@ -86,6 +96,8 @@ buildAngularApp()
     const server = app.listen(port, '0.0.0.0', () => {
       console.log(`Server running on port ${port}`);
       console.log('Server is listening on all network interfaces');
+      console.log('Static files directory:', staticPath);
+      console.log('Directory contents:', fs.readdirSync(staticPath));
     });
 
     // Handle server errors
